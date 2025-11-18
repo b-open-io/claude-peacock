@@ -24,11 +24,18 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 /plugin install peacock@b-open-io
 ```
 
-That's it! The plugin automatically:
-- Installs on first session start (SessionStart hook)
-- Copies statusline.sh to ~/.claude/
-- Configures settings.json
-- No manual commands needed!
+That's it! The plugin automatically configures itself on first session start.
+
+### Uninstallation
+
+**Important:** Before uninstalling, clean up the settings:
+
+```shell
+/peacock:cleanup
+# Then uninstall via /plugin
+```
+
+This removes the statusline configuration from `~/.claude/settings.json`. Without cleanup, the settings entry remains but harmlessly points to a non-existent file.
 
 ### Manual Installation
 

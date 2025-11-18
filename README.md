@@ -22,10 +22,9 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 ```shell
 /plugin marketplace add b-open-io/claude-plugins
 /plugin install claude-peacock@b-open-io
-/peacock-setup
 ```
 
-Restart Claude Code to activate the statusline.
+That's it! The plugin automatically configures itself on your next Claude Code session. No manual setup needed.
 
 ### Manual Installation
 

@@ -5,13 +5,12 @@
 
 set -e
 
-# Base colors
-WHITE='\033[38;5;255m'
-BLACK='\033[38;5;232m'
-GRAY='\033[38;5;245m'
-
-BOLD='\033[1m'
-RESET='\033[0m'
+# Base colors (exported for potential external use)
+export WHITE='\033[38;5;255m'
+export BLACK='\033[38;5;232m'
+export GRAY='\033[38;5;245m'
+export BOLD='\033[1m'
+export RESET='\033[0m'
 
 # Convert hex color to RGB
 hex_to_rgb() {
@@ -39,9 +38,12 @@ rgb_to_fg_true() {
 calculate_luminance() {
   local r=$1 g=$2 b=$3
   # Normalize to 0-1
-  local rf=$(awk "BEGIN {printf \"%.4f\", $r / 255}")
-  local gf=$(awk "BEGIN {printf \"%.4f\", $g / 255}")
-  local bf=$(awk "BEGIN {printf \"%.4f\", $b / 255}")
+  local rf
+  local gf
+  local bf
+  rf=$(awk "BEGIN {printf \"%.4f\", $r / 255}")
+  gf=$(awk "BEGIN {printf \"%.4f\", $g / 255}")
+  bf=$(awk "BEGIN {printf \"%.4f\", $b / 255}")
 
   # Apply gamma correction
   rf=$(awk "BEGIN {if ($rf <= 0.03928) print $rf / 12.92; else print ((($rf + 0.055) / 1.055) ^ 2.4)}")
@@ -55,7 +57,8 @@ calculate_luminance() {
 # Get contrasting text color (returns ANSI color code)
 get_contrast_text() {
   local r=$1 g=$2 b=$3
-  local lum=$(calculate_luminance $r $g $b)
+  local lum
+  lum=$(calculate_luminance "$r" "$g" "$b")
 
   # If luminance > 0.5, use dark text; otherwise use light text
   if (( $(awk "BEGIN {print ($lum > 0.4)}") )); then
@@ -81,8 +84,9 @@ generate_color_family() {
   local b3=$(( b + 80 > 255 ? 255 : b + 80 ))
 
   # Contrasting text color for base (returns 232 or 255)
-  local text_code=$(get_contrast_text $r $g $b)
+  local text_code
   local text_r text_g text_b
+  text_code=$(get_contrast_text "$r" "$g" "$b")
   if [[ "$text_code" == "232" ]]; then
     text_r=40; text_g=40; text_b=40  # Dark gray
   else
@@ -103,10 +107,14 @@ load_project_colors() {
   fi
 
   # Load all relevant colors from settings
-  local base=$(jq -r '.["peacock.color"] // .workbench.colorCustomizations["titleBar.activeBackground"] // empty' "$settings_file" 2>/dev/null)
-  local light_fg=$(jq -r '.workbench.colorCustomizations["activityBar.foreground"] // empty' "$settings_file" 2>/dev/null)
-  local dark_fg=$(jq -r '.workbench.colorCustomizations["activityBarBadge.foreground"] // empty' "$settings_file" 2>/dev/null)
-  local badge=$(jq -r '.workbench.colorCustomizations["activityBarBadge.background"] // empty' "$settings_file" 2>/dev/null)
+  local base
+  local light_fg
+  local dark_fg
+  local badge
+  base=$(jq -r '.["peacock.color"] // .workbench.colorCustomizations["titleBar.activeBackground"] // empty' "$settings_file" 2>/dev/null)
+  light_fg=$(jq -r '.workbench.colorCustomizations["activityBar.foreground"] // empty' "$settings_file" 2>/dev/null)
+  dark_fg=$(jq -r '.workbench.colorCustomizations["activityBarBadge.foreground"] // empty' "$settings_file" 2>/dev/null)
+  badge=$(jq -r '.workbench.colorCustomizations["activityBarBadge.background"] // empty' "$settings_file" 2>/dev/null)
 
   # Return all colors (empty values will be handled by caller)
   echo "$base $light_fg $dark_fg $badge"
@@ -219,11 +227,11 @@ if [[ -n "$TRANSCRIPT" && -f "$TRANSCRIPT" ]]; then
       PROJECT="${BASH_REMATCH[1]}"
     elif [[ "$DETECTED_PATH" =~ ^$HOME/([^/]+)/ ]]; then
       # File is under home but not in CODE_DIR
-      PROJECT="~/${BASH_REMATCH[1]}"
+      PROJECT="$HOME/${BASH_REMATCH[1]}"
       PROJECT_IS_HOME=true
     elif [[ "$DETECTED_PATH" =~ ^$HOME/[^/]+$ ]]; then
       # File directly in home
-      PROJECT="~"
+      PROJECT="$HOME"
       PROJECT_IS_HOME=true
     fi
   fi
@@ -253,26 +261,26 @@ fi
 # Load project colors and generate color families
 # CWD Project colors (cyan family by default)
 if [[ -n "$CWD_PROJECT" && "$CWD_PROJECT" != "~"* ]]; then
-  read -r CWD_BASE CWD_LIGHT_FG CWD_DARK_FG CWD_BADGE <<< $(load_project_colors "${CODE_DIR}/${CWD_PROJECT}")
+  read -r CWD_BASE CWD_LIGHT_FG CWD_DARK_FG CWD_BADGE <<< "$(load_project_colors "${CODE_DIR}/${CWD_PROJECT}")"
   if [[ -n "$CWD_BASE" ]]; then
-    read -r CWD_R CWD_G CWD_B <<< $(hex_to_rgb "$CWD_BASE")
-    read -r C_R1 C_G1 C_B1 C_R2 C_G2 C_B2 C_R3 C_G3 C_B3 C_TR C_TG C_TB <<< $(generate_color_family $CWD_R $CWD_G $CWD_B)
+    read -r CWD_R CWD_G CWD_B <<< "$(hex_to_rgb "$CWD_BASE")"
+    read -r C_R1 C_G1 C_B1 C_R2 C_G2 C_B2 C_R3 C_G3 C_B3 C_TR C_TG C_TB <<< "$(generate_color_family "$CWD_R" "$CWD_G" "$CWD_B")"
 
     # Use theme's text colors if available
     if [[ -n "$CWD_LIGHT_FG" ]]; then
-      read -r C_TR C_TG C_TB <<< $(hex_to_rgb "$CWD_LIGHT_FG")
+      read -r C_TR C_TG C_TB <<< "$(hex_to_rgb "$CWD_LIGHT_FG")"
     fi
 
     # Dark text color for light backgrounds (git branch)
     if [[ -n "$CWD_DARK_FG" ]]; then
-      read -r C_DARK_R C_DARK_G C_DARK_B <<< $(hex_to_rgb "$CWD_DARK_FG")
+      read -r C_DARK_R C_DARK_G C_DARK_B <<< "$(hex_to_rgb "$CWD_DARK_FG")"
     else
       C_DARK_R=40; C_DARK_G=40; C_DARK_B=40  # Fallback dark gray
     fi
 
     # Store badge color for later use (lint indicators)
     if [[ -n "$CWD_BADGE" ]]; then
-      read -r C_BADGE_R C_BADGE_G C_BADGE_B <<< $(hex_to_rgb "$CWD_BADGE")
+      read -r C_BADGE_R C_BADGE_G C_BADGE_B <<< "$(hex_to_rgb "$CWD_BADGE")"
     else
       C_BADGE_R=$C_R3; C_BADGE_G=$C_G3; C_BADGE_B=$C_B3
     fi
@@ -293,33 +301,33 @@ BG_C2="\033[48;2;${C_R2};${C_G2};${C_B2}m"
 BG_C3="\033[48;2;${C_R3};${C_G3};${C_B3}m"
 FG_C1="\033[38;2;${C_R1};${C_G1};${C_B1}m"
 FG_C2="\033[38;2;${C_R2};${C_G2};${C_B2}m"
-FG_C3="\033[38;2;${C_R3};${C_G3};${C_B3}m"
+export FG_C3="\033[38;2;${C_R3};${C_G3};${C_B3}m"  # Exported for potential external use
 TEXT_C="\033[38;2;${C_TR};${C_TG};${C_TB}m"
 DARK_TEXT_C="\033[38;2;${C_DARK_R};${C_DARK_G};${C_DARK_B}m"
 BADGE_C="\033[38;2;${C_BADGE_R};${C_BADGE_G};${C_BADGE_B}m"
 
 # Edited Project colors (purple family by default)
 if [[ -n "$PROJECT" && "$PROJECT" != "~"* && "$PROJECT_IS_HOME" == false ]]; then
-  read -r PROJ_BASE PROJ_LIGHT_FG PROJ_DARK_FG PROJ_BADGE <<< $(load_project_colors "${CODE_DIR}/${PROJECT}")
+  read -r PROJ_BASE PROJ_LIGHT_FG PROJ_DARK_FG PROJ_BADGE <<< "$(load_project_colors "${CODE_DIR}/${PROJECT}")"
   if [[ -n "$PROJ_BASE" ]]; then
-    read -r PROJ_R PROJ_G PROJ_B <<< $(hex_to_rgb "$PROJ_BASE")
-    read -r P_R1 P_G1 P_B1 P_R2 P_G2 P_B2 P_R3 P_G3 P_B3 P_TR P_TG P_TB <<< $(generate_color_family $PROJ_R $PROJ_G $PROJ_B)
+    read -r PROJ_R PROJ_G PROJ_B <<< "$(hex_to_rgb "$PROJ_BASE")"
+    read -r P_R1 P_G1 P_B1 P_R2 P_G2 P_B2 P_R3 P_G3 P_B3 P_TR P_TG P_TB <<< "$(generate_color_family "$PROJ_R" "$PROJ_G" "$PROJ_B")"
 
     # Use theme's text colors if available
     if [[ -n "$PROJ_LIGHT_FG" ]]; then
-      read -r P_TR P_TG P_TB <<< $(hex_to_rgb "$PROJ_LIGHT_FG")
+      read -r P_TR P_TG P_TB <<< "$(hex_to_rgb "$PROJ_LIGHT_FG")"
     fi
 
     # Dark text color for light backgrounds (git branch)
     if [[ -n "$PROJ_DARK_FG" ]]; then
-      read -r P_DARK_R P_DARK_G P_DARK_B <<< $(hex_to_rgb "$PROJ_DARK_FG")
+      read -r P_DARK_R P_DARK_G P_DARK_B <<< "$(hex_to_rgb "$PROJ_DARK_FG")"
     else
       P_DARK_R=40; P_DARK_G=40; P_DARK_B=40  # Fallback dark gray
     fi
 
     # Store badge color for later use (lint indicators)
     if [[ -n "$PROJ_BADGE" ]]; then
-      read -r P_BADGE_R P_BADGE_G P_BADGE_B <<< $(hex_to_rgb "$PROJ_BADGE")
+      read -r P_BADGE_R P_BADGE_G P_BADGE_B <<< "$(hex_to_rgb "$PROJ_BADGE")"
     else
       P_BADGE_R=$P_R3; P_BADGE_G=$P_G3; P_BADGE_B=$P_B3
     fi
@@ -340,7 +348,7 @@ BG_P2="\033[48;2;${P_R2};${P_G2};${P_B2}m"
 BG_P3="\033[48;2;${P_R3};${P_G3};${P_B3}m"
 FG_P1="\033[38;2;${P_R1};${P_G1};${P_B1}m"
 FG_P2="\033[38;2;${P_R2};${P_G2};${P_B2}m"
-FG_P3="\033[38;2;${P_R3};${P_G3};${P_B3}m"
+export FG_P3="\033[38;2;${P_R3};${P_G3};${P_B3}m"  # Exported for potential external use
 TEXT_P="\033[38;2;${P_TR};${P_TG};${P_TB}m"
 DARK_TEXT_P="\033[38;2;${P_DARK_R};${P_DARK_G};${P_DARK_B}m"
 BADGE_P="\033[38;2;${P_BADGE_R};${P_BADGE_G};${P_BADGE_B}m"
@@ -351,8 +359,9 @@ get_git_branch() {
   local proj_dir="${CODE_DIR}/$proj"
 
   if [[ -d "$proj_dir/.git" ]]; then
-    local branch=$(git -C "$proj_dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
+    local branch
     local dirty=""
+    branch=$(git -C "$proj_dir" rev-parse --abbrev-ref HEAD 2>/dev/null)
 
     # Check for uncommitted changes
     if ! git -C "$proj_dir" diff --quiet HEAD 2>/dev/null; then
@@ -373,8 +382,10 @@ get_lint_counts() {
     return
   fi
 
-  local errors=$(jq -r '.errors // 0' "$state_file" 2>/dev/null || echo "0")
-  local warnings=$(jq -r '.warnings // 0' "$state_file" 2>/dev/null || echo "0")
+  local errors
+  local warnings
+  errors=$(jq -r '.errors // 0' "$state_file" 2>/dev/null || echo "0")
+  warnings=$(jq -r '.warnings // 0' "$state_file" 2>/dev/null || echo "0")
 
   [[ -z "$errors" || ! "$errors" =~ ^[0-9]+$ ]] && errors=0
   [[ -z "$warnings" || ! "$warnings" =~ ^[0-9]+$ ]] && warnings=0
@@ -392,7 +403,7 @@ if [[ -n "$CWD_DISPLAY" ]]; then
 
   if [[ -n "$CWD_PROJECT" ]]; then
     # Add lint for CWD
-    read -r CWD_ERRORS CWD_WARNINGS <<< $(get_lint_counts "$CWD_PROJECT")
+    read -r CWD_ERRORS CWD_WARNINGS <<< "$(get_lint_counts "$CWD_PROJECT")"
 
     OUTPUT="${OUTPUT}${FG_C1}${BG_C2}▶"
 
@@ -425,7 +436,7 @@ if [[ -n "$CWD_DISPLAY" ]]; then
     # Only show lint/git for CODE_DIR projects, not home-based (~)
     if [[ "$PROJECT_IS_HOME" == false ]]; then
       # Get lint for last edited project
-      read -r ERRORS WARNINGS <<< $(get_lint_counts "$PROJECT")
+      read -r ERRORS WARNINGS <<< "$(get_lint_counts "$PROJECT")"
 
       OUTPUT="${OUTPUT}${FG_P1}${BG_P2}▶"
 
@@ -458,7 +469,7 @@ elif [[ -n "$PROJECT" ]]; then
   # Only show lint/git for CODE_DIR projects, not home-based (~)
   if [[ "$PROJECT_IS_HOME" == false ]]; then
     # Get lint for last edited project
-    read -r ERRORS WARNINGS <<< $(get_lint_counts "$PROJECT")
+    read -r ERRORS WARNINGS <<< "$(get_lint_counts "$PROJECT")"
 
     OUTPUT="${OUTPUT}${FG_P1}${BG_P2}▶"
 
@@ -507,15 +518,15 @@ if [[ -n "$LAST_FILE" && -f "$LAST_FILE" ]]; then
   if [[ "$PROJECT_IS_HOME" == true && "$PROJECT" != "~" ]]; then
     # Project is ~/dirname, strip $HOME/dirname/ to show relative path
     # e.g., ~/.claude/hooks/file.sh with project=~/.claude -> hooks/file.sh
-    HOME_SUBDIR="${PROJECT#\~/}"
-    RELATIVE_FILE="${LAST_FILE#$HOME/$HOME_SUBDIR/}"
+    HOME_SUBDIR="${PROJECT#"$HOME"/}"
+    RELATIVE_FILE="${LAST_FILE#"$HOME"/"$HOME_SUBDIR"/}"
   elif [[ "$PROJECT_IS_HOME" == true ]]; then
     # Project is ~, file directly in home
-    RELATIVE_FILE="${LAST_FILE#$HOME/}"
+    RELATIVE_FILE="${LAST_FILE#"$HOME"/}"
   elif [[ -n "$PROJECT" ]]; then
-    RELATIVE_FILE="${LAST_FILE#${CODE_DIR}/${PROJECT}/}"
+    RELATIVE_FILE="${LAST_FILE#"${CODE_DIR}"/"${PROJECT}"/}"
   elif [[ -n "$CWD_PROJECT" ]]; then
-    RELATIVE_FILE="${LAST_FILE#${CODE_DIR}/${CWD_PROJECT}/}"
+    RELATIVE_FILE="${LAST_FILE#"${CODE_DIR}"/"${CWD_PROJECT}"/}"
   fi
 
   # Build URL based on editor scheme

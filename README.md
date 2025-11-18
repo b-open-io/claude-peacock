@@ -17,14 +17,18 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 
 ## Installation
 
-### Via Plugin System (Recommended)
+### Via Plugin System
 
 ```shell
 /plugin marketplace add b-open-io/claude-plugins
 /plugin install claude-peacock@b-open-io
 ```
 
-That's it! The plugin automatically configures itself on your next Claude Code session. No manual setup needed.
+That's it! The plugin automatically:
+- Installs on first session start (SessionStart hook)
+- Copies statusline.sh to ~/.claude/
+- Configures settings.json
+- No manual commands needed!
 
 ### Manual Installation
 
@@ -69,24 +73,23 @@ The statusline activates automatically and shows:
 - `125k` - Token usage in thousands
 - `statusline.sh` - Last edited file (clickable)
 
-### Project Colors
+### Setting Project Colors
 
-Set VSCode workspace colors for any project:
+Manually edit `.vscode/settings.json` in your project:
 
-```shell
-# Random vibrant color
-/project-color
-
-# Specific hex color
-/project-color #8d0756
-
-# Natural language
-/project-color dark forest green
-/project-color vibrant ocean blue
-/project-color muted coral
+```json
+{
+  "peacock.color": "#8d0756",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#8d0756",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBarBadge.foreground": "#15202b",
+    "activityBarBadge.background": "#6fb709"
+  }
+}
 ```
 
-This creates/updates `.vscode/settings.json` with Peacock-compatible color settings.
+Or use the VSCode Peacock extension to set colors interactively.
 
 ## How It Works
 

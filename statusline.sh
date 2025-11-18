@@ -135,15 +135,38 @@ TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
 
 PROJECT=""
 
-# Configure your code directory here (default: ~/code)
-CODE_DIR="${CODE_DIR:-$HOME/code}"
+# Auto-detect code directory (or use CODE_DIR env if set)
+if [[ -n "$CODE_DIR" ]]; then
+  # Use environment variable if set
+  CODE_DIR="$CODE_DIR"
+elif [[ -d "$HOME/code" ]]; then
+  CODE_DIR="$HOME/code"
+elif [[ -d "$HOME/projects" ]]; then
+  CODE_DIR="$HOME/projects"
+elif [[ -d "$HOME/dev" ]]; then
+  CODE_DIR="$HOME/dev"
+elif [[ -d "$HOME/workspace" ]]; then
+  CODE_DIR="$HOME/workspace"
+elif [[ -d "$HOME/src" ]]; then
+  CODE_DIR="$HOME/src"
+else
+  # Fall back to home directory
+  CODE_DIR="$HOME"
+fi
 
-# Editor URL scheme (cursor, vscode, sublime, file)
-# cursor  -> cursor://file/PATH
-# vscode  -> vscode://file/PATH
-# sublime -> subl://open?url=file://PATH
-# file    -> file://PATH (opens in system default)
-EDITOR_SCHEME="${EDITOR_SCHEME:-cursor}"
+# Auto-detect editor (or use EDITOR_SCHEME env if set)
+# Priority: EDITOR_SCHEME env > detect installed editors > default to cursor
+if [[ -n "$EDITOR_SCHEME" ]]; then
+  EDITOR_SCHEME="$EDITOR_SCHEME"
+elif command -v cursor &> /dev/null; then
+  EDITOR_SCHEME="cursor"
+elif command -v code &> /dev/null; then
+  EDITOR_SCHEME="vscode"
+elif command -v subl &> /dev/null; then
+  EDITOR_SCHEME="sublime"
+else
+  EDITOR_SCHEME="file"
+fi
 
 # Verify transcript exists
 if [[ -n "$TRANSCRIPT" && ! -f "$TRANSCRIPT" ]]; then

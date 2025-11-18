@@ -1,6 +1,6 @@
-# Claude Peacock
+# Peacock
 
-> VSCode Peacock theme integration for Claude Code statusline
+> Peacock theme integration for Claude Code
 
 Beautiful, theme-aware statusline for Claude Code that automatically matches your VSCode Peacock colors with 24-bit true color support.
 
@@ -21,7 +21,7 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 
 ```shell
 /plugin marketplace add b-open-io/claude-plugins
-/plugin install claude-peacock@b-open-io
+/plugin install peacock@b-open-io
 ```
 
 That's it! The plugin automatically:

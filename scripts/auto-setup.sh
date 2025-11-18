@@ -1,31 +1,26 @@
 #!/bin/bash
-# Auto-setup script for claude-peacock plugin
-# Runs on SessionStart - idempotent (safe to run multiple times)
+# Auto-setup script for Peacock plugin
+# Runs on SessionStart - configures settings.json to use plugin's statusline
 
-SETUP_MARKER="$HOME/.claude/.peacock-installed"
+SETTINGS_FILE="$HOME/.claude/settings.json"
 
-# Only run full setup if not already done
-if [ ! -f "$SETUP_MARKER" ]; then
-  # Copy statusline script
-  cp "${CLAUDE_PLUGIN_ROOT}/statusline.sh" "$HOME/.claude/statusline.sh"
-  chmod +x "$HOME/.claude/statusline.sh"
+# Create settings.json if it doesn't exist
+if [ ! -f "$SETTINGS_FILE" ]; then
+  echo '{}' > "$SETTINGS_FILE"
+fi
 
-  # Configure settings.json
-  SETTINGS_FILE="$HOME/.claude/settings.json"
+# Only configure if not already set up
+if command -v jq &> /dev/null; then
+  # Check if statusLine already points to our plugin
+  CURRENT_STATUSLINE=$(jq -r '.statusLine.command // empty' "$SETTINGS_FILE")
 
-  # Create settings.json if it doesn't exist
-  if [ ! -f "$SETTINGS_FILE" ]; then
-    echo '{}' > "$SETTINGS_FILE"
-  fi
-
-  # Add statusline configuration using jq
-  if command -v jq &> /dev/null; then
-    # Use jq to merge statusline config
+  # Only update if not already pointing to peacock plugin
+  if [[ ! "$CURRENT_STATUSLINE" =~ peacock/statusline\.sh$ ]]; then
+    # Configure to use plugin's statusline directly (no copying)
     TEMP_FILE=$(mktemp)
-    jq '. + {"statusLine": {"type": "command", "command": "~/.claude/statusline.sh"}}' "$SETTINGS_FILE" > "$TEMP_FILE"
+    jq --arg cmd "${CLAUDE_PLUGIN_ROOT}/statusline.sh" \
+       '.statusLine = {"type": "command", "command": $cmd}' \
+       "$SETTINGS_FILE" > "$TEMP_FILE"
     mv "$TEMP_FILE" "$SETTINGS_FILE"
   fi
-
-  # Mark as installed
-  touch "$SETUP_MARKER"
 fi

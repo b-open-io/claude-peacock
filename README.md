@@ -17,25 +17,39 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 
 ## Installation
 
-### Via Plugin System
+**Step 1:** Install the plugin
 
 ```shell
 /plugin marketplace add b-open-io/claude-plugins
 /plugin install peacock@b-open-io
 ```
 
-That's it! The plugin automatically configures itself on first session start.
-
-### Uninstallation
-
-**Important:** Before uninstalling, clean up the settings:
+**Step 2:** Run setup
 
 ```shell
-/peacock:cleanup
-# Then uninstall via /plugin
+/peacock:setup
 ```
 
-This removes the statusline configuration from `~/.claude/settings.json`. Without cleanup, the settings entry remains but harmlessly points to a non-existent file.
+**Step 3:** Restart Claude Code
+
+That's it! Your statusline will now show with Peacock theme colors.
+
+## Uninstallation
+
+**Step 1:** Remove configuration
+
+```shell
+/peacock:unsetup
+```
+
+**Step 2:** Uninstall plugin
+
+```shell
+/plugin
+# Select peacock and uninstall
+```
+
+Simple, explicit, no surprises.
 
 ### Manual Installation
 

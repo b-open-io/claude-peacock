@@ -1,13 +1,12 @@
 {
   "name": "peacock",
   "description": "Peacock theme integration for Claude Code - statusline with 24-bit true color support",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": {
     "name": "b-open-io",
     "url": "https://github.com/b-open-io"
   },
   "repository": "b-open-io/claude-peacock",
-  "hooks": "./hooks/hooks.json",
   "keywords": [
     "statusline",
     "peacock",

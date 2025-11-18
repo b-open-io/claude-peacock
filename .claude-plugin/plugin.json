@@ -6,10 +6,7 @@
     "name": "b-open-io",
     "url": "https://github.com/b-open-io"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/b-open-io/claude-peacock.git"
-  },
+  "repository": "b-open-io/claude-peacock",
   "keywords": [
     "statusline",
     "peacock",

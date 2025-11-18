@@ -237,6 +237,9 @@ if [[ -n "$TRANSCRIPT" && -f "$TRANSCRIPT" ]]; then
   fi
 fi
 
+# Set LAST_FILE to the detected path for display at end
+LAST_FILE="$DETECTED_PATH"
+
 # Get token usage from transcript (look for assistant turns with usage info)
 TOKEN_USAGE=""
 if [[ -n "$TRANSCRIPT" && -f "$TRANSCRIPT" ]]; then

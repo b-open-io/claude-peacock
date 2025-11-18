@@ -135,12 +135,19 @@ TRANSCRIPT=$(echo "$INPUT" | jq -r '.transcript_path // empty' 2>/dev/null)
 
 PROJECT=""
 
-# Auto-detect code directory (or use CODE_DIR env if set)
+# Load config from ~/.claude/.peacock-config if it exists
+if [[ -f "$HOME/.claude/.peacock-config" ]]; then
+  source "$HOME/.claude/.peacock-config"
+fi
+
+# Auto-detect code directory (or use CODE_DIR env/config if set)
 if [[ -n "$CODE_DIR" ]]; then
-  # Use environment variable if set
+  # Use environment variable or config if set
   CODE_DIR="$CODE_DIR"
 elif [[ -d "$HOME/code" ]]; then
   CODE_DIR="$HOME/code"
+elif [[ -d "$HOME/Source" ]]; then
+  CODE_DIR="$HOME/Source"
 elif [[ -d "$HOME/projects" ]]; then
   CODE_DIR="$HOME/projects"
 elif [[ -d "$HOME/dev" ]]; then
@@ -154,8 +161,8 @@ else
   CODE_DIR="$HOME"
 fi
 
-# Auto-detect editor (or use EDITOR_SCHEME env if set)
-# Priority: EDITOR_SCHEME env > detect installed editors > default to cursor
+# Auto-detect editor (or use EDITOR_SCHEME env/config if set)
+# Priority: env/config > detect installed editors > default to cursor
 if [[ -n "$EDITOR_SCHEME" ]]; then
   EDITOR_SCHEME="$EDITOR_SCHEME"
 elif command -v cursor &> /dev/null; then

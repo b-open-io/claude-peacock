@@ -42,7 +42,17 @@ Or install jq and run /peacock:unsetup again:
 
 And stop execution.
 
-## Step 2: Remove Statusline Script
+## Step 2: Remove Config File
+
+Remove the Peacock config file if it exists:
+
+```bash
+if [[ -f ~/.claude/.peacock-config ]]; then
+  rm ~/.claude/.peacock-config
+fi
+```
+
+## Step 3: Remove Statusline Script
 
 Check if ~/.claude/statusline.sh exists:
 ```bash
@@ -67,7 +77,7 @@ Not removing it automatically. If you want to remove it, delete it manually:
   rm ~/.claude/statusline.sh
 ```
 
-## Step 3: Remove statusLine from settings.json
+## Step 4: Remove statusLine from settings.json
 
 Check if settings.json exists:
 ```bash
@@ -87,13 +97,14 @@ jq . ~/.claude/settings.json
 
 If validation fails, output error and restore from backup.
 
-## Step 4: Confirm Success
+## Step 5: Confirm Success
 
 Output:
 ```
 ✅ Peacock statusline configuration removed successfully!
 
 What was done:
+  • Removed ~/.claude/.peacock-config
   • Removed ~/.claude/statusline.sh
   • Removed statusLine entry from ~/.claude/settings.json
 

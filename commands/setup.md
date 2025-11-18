@@ -1,6 +1,6 @@
 ---
-version: 0.0.1
-allowed-tools: Read, Write, Bash(cp:*), Bash(chmod:*), Bash(jq:*)
+version: 0.0.2
+allowed-tools: Read, Write, Bash(command:*), Bash(ls:*), Bash(cp:*), Bash(chmod:*), Bash(jq:*), Bash(mv:*), Bash(echo:*)
 description: Configure Peacock statusline - run after plugin installation
 tags: setup, installation, statusline
 ---

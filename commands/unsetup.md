@@ -1,6 +1,6 @@
 ---
-version: 0.0.1
-allowed-tools: Read, Bash(rm:*), Bash(jq:*)
+version: 0.0.2
+allowed-tools: Read, Bash(command:*), Bash(ls:*), Bash(rm:*), Bash(jq:*), Bash(mv:*), Bash(head:*), Bash(grep:*)
 description: Remove Peacock statusline configuration - run before uninstalling plugin
 tags: uninstall, cleanup, statusline
 ---

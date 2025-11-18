@@ -123,15 +123,20 @@ Uses **most recent** operation to determine active project.
 
 ## Configuration
 
-### Environment Variables
+**No configuration needed!** The statusline automatically detects:
+- **Code directory**: Checks `~/code`, `~/projects`, `~/dev`, `~/workspace`, `~/src` (or falls back to `~`)
+- **Editor**: Detects installed editors (`cursor`, `code`, `subl`) for clickable file links
+
+### Optional Environment Variables
+
+Override auto-detection if needed:
 
 ```bash
-# Code directory (default: ~/code)
-export CODE_DIR="$HOME/projects"
+# Custom code directory
+export CODE_DIR="$HOME/custom/path"
 
-# Editor URL scheme (default: cursor)
-# Options: cursor, vscode, sublime, file
-export EDITOR_SCHEME="vscode"
+# Force specific editor scheme
+export EDITOR_SCHEME="vscode"  # Options: cursor, vscode, sublime, file
 ```
 
 ### VSCode Settings Structure

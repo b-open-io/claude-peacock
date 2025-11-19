@@ -12,7 +12,7 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 - 📁 **Works Everywhere** - No configuration needed for `~/code`, `~/Source`, `~/projects`, or any code directory
 - 🏠 **Project Awareness** - Shows both CWD (⌂ project) and working folder (✎ currently editing)
 - 🔀 **Git Integration** - Branch name with dirty state indicator
-- ✓ **Lint Status** - Error/warning counts with theme-matched badge colors
+- ✓ **Automatic Linting** - Runs lint on save and displays error/warning counts (TypeScript/JavaScript via Biome/ESLint, Go via golangci-lint)
 - 🎨 **Smart Text Contrast** - Uses Peacock's foreground colors for perfect readability
 - 🔗 **Clickable Paths** - Last edited file as clickable link (Cursor/VSCode/Sublime)
 - 📊 **Token Usage** - Real-time tracking in separate visual segment
@@ -160,6 +160,26 @@ Uses **most recent** operation to determine active working folder.
 - Theme's `activityBar.foreground` (#e7e7e7) for main text
 - Theme's `activityBarBadge.foreground` (#15202b) for dark text (git branch)
 - Theme's `activityBarBadge.background` for lint indicators
+
+### Automatic Linting
+
+The plugin includes hooks that automatically run linting:
+
+**On Save (PostToolUse hook):**
+- Triggers after Edit/Write operations
+- Runs appropriate linter for project type
+- Stores error/warning counts in `~/.claude/lint-state/`
+- 60-second cooldown to avoid excessive runs
+
+**On Session Start:**
+- Runs linting when Claude Code starts
+- Updates statusline with current project status
+
+**Supported Linters:**
+- **TypeScript/JavaScript**: Looks for `lint` or `lint:fix` scripts in `package.json`, runs with `bun`
+- **Go**: Uses `golangci-lint run` if installed
+
+The hooks are automatically installed via the plugin system - no manual setup needed!
 
 ## Configuration
 

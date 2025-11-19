@@ -1,5 +1,5 @@
 ---
-version: 0.0.4
+version: 0.0.5
 allowed-tools: Read, Write, AskUserQuestion, Bash(command:*), Bash(ls:*), Bash(cp:*), Bash(chmod:*), Bash(jq:*), Bash(mv:*), Bash(echo:*), Bash(cat:*)
 description: Configure Peacock statusline - run after plugin installation
 tags: setup, installation, statusline
@@ -106,6 +106,8 @@ cp ~/.claude/plugins/cache/peacock/statusline.sh ~/.claude/statusline.sh
 chmod +x ~/.claude/statusline.sh
 ```
 
+**Note:** Lint hooks are automatically installed via the plugin system - no manual setup needed!
+
 ## Step 6: Configure settings.json
 
 Create or update `~/.claude/settings.json` with the statusLine configuration.
@@ -142,15 +144,17 @@ Configuration:
   • Editor: Auto-detect (cursor → vscode → sublime → file)
   • Statusline: ~/.claude/statusline.sh
   • Settings: ~/.claude/settings.json
+  • Lint hooks: Auto-installed via plugin system
 
 Next step:
-  Restart Claude Code to see your new statusline
+  Restart Claude Code to see your new statusline and activate lint hooks
 
 Features:
   ✓ Automatic project root detection (finds .git, package.json, etc.)
   ✓ Works with any code directory (~/code, ~/Source, ~/projects)
   ✓ Shows Peacock theme colors from .vscode/settings.json
   ✓ Displays git branch, lint status, and token usage
+  ✓ Automatic linting on save (TypeScript/JavaScript via Biome/ESLint, Go via golangci-lint)
   ✓ Clickable file paths that open in your editor
   ✓ Separate visual segments for project and working folder
 

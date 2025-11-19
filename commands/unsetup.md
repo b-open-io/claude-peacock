@@ -1,5 +1,5 @@
 ---
-version: 0.0.3
+version: 0.0.4
 allowed-tools: Read, Bash(command:*), Bash(ls:*), Bash(rm:*), Bash(jq:*), Bash(mv:*), Bash(head:*), Bash(grep:*)
 description: Remove Peacock statusline configuration - run before uninstalling plugin
 tags: uninstall, cleanup, statusline
@@ -109,9 +109,12 @@ What was done:
   • Removed ~/.claude/statusline.sh
   • Removed statusLine entry from ~/.claude/settings.json
 
+Note: Lint hooks will be automatically removed when you uninstall the plugin.
+
 Next steps:
   1. Restart Claude Code (statusline will no longer appear)
   2. Uninstall the plugin: /plugin
+     (This will also remove lint hooks automatically)
 
 To reinstall later:
   /plugin install peacock@b-open-io
@@ -121,6 +124,7 @@ Features you'll get back:
   • Automatic project root detection (works with ~/code, ~/Source, ~/projects)
   • Peacock theme color integration
   • Git branch, lint status, and token usage display
+  • Automatic linting (TypeScript/JavaScript, Go)
   • Clickable file paths
 ```
 

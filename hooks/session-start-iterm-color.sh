@@ -4,6 +4,11 @@
 
 set -e
 
+# Only run in iTerm2
+if [[ "$TERM_PROGRAM" != "iTerm.app" ]]; then
+  exit 0
+fi
+
 # Read hook input from stdin
 INPUT=$(cat)
 

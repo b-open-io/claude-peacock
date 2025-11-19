@@ -486,9 +486,9 @@ if [[ -n "$TERMINAL_TITLE" ]]; then
 fi
 
 # Set iTerm2 tab color to match Peacock theme (if available)
-# Uses OSC 6 sequence for tab color
-# Only set if we have a project with Peacock colors
-if [[ -n "$CWD_R" && -n "$CWD_G" && -n "$CWD_B" ]]; then
+# Uses OSC 6 sequence for tab color (iTerm2-specific)
+# Only set if we have a project with Peacock colors and we're in iTerm2
+if [[ "$TERM_PROGRAM" == "iTerm.app" && -n "$CWD_R" && -n "$CWD_G" && -n "$CWD_B" ]]; then
   # Set tab color to CWD project's Peacock color
   echo -ne "\033]6;1;bg;red;brightness;${CWD_R}\007" >&2
   echo -ne "\033]6;1;bg;green;brightness;${CWD_G}\007" >&2

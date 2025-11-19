@@ -8,12 +8,14 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 
 - 🎨 **Automatic Peacock Detection** - Reads colors from `.vscode/settings.json`
 - 🌈 **24-bit True Color** - Exact hex color matching (no ANSI 256 approximations)
-- 📁 **Project Awareness** - Shows both CWD (⌂) and last edited project (✎)
+- 🎯 **Automatic Project Root Detection** - Walks up directory tree to find `.git`, `package.json`, etc.
+- 📁 **Works Everywhere** - No configuration needed for `~/code`, `~/Source`, `~/projects`, or any code directory
+- 🏠 **Project Awareness** - Shows both CWD (⌂ project) and working folder (✎ currently editing)
 - 🔀 **Git Integration** - Branch name with dirty state indicator
 - ✓ **Lint Status** - Error/warning counts with theme-matched badge colors
-- 🎯 **Smart Text Contrast** - Uses Peacock's foreground colors for perfect readability
+- 🎨 **Smart Text Contrast** - Uses Peacock's foreground colors for perfect readability
 - 🔗 **Clickable Paths** - Last edited file as clickable link (Cursor/VSCode/Sublime)
-- 📊 **Token Usage** - Real-time token consumption tracking
+- 📊 **Token Usage** - Real-time tracking in separate visual segment
 
 ## Installation
 
@@ -83,16 +85,16 @@ Simple, explicit, no surprises.
 The statusline activates automatically and shows:
 
 ```
-⌂ project-name ▶ ✓ ▶ ⎇ main  ✎ other-project ▶ ✗2 △1 ▶ ⎇ feature*  125k statusline.sh
+⌂ project-name ▶ ✓ ▶ ⎇ main  ✎ other-project ▶ ✗2 △1 ▶ ⎇ feature*  [125k] statusline.sh
 ```
 
 **Segments:**
-- `⌂ project-name` - Current working directory (cyan/theme color)
+- `⌂ project-name` - Project where Claude started (cyan/theme color)
 - `✓` or `✗N △M` - Lint status (✓ clean, ✗ errors, △ warnings)
 - `⎇ main` - Git branch (clean) or `⎇ feature*` (dirty)
-- `✎ other-project` - Last edited project if different (purple/theme color)
-- `125k` - Token usage in thousands
-- `statusline.sh` - Last edited file (clickable)
+- `✎ other-project` - Working folder currently editing if different (purple/theme color)
+- `[125k]` - Token usage in separate dark gray box
+- `statusline.sh` - Last edited file (clickable, relative to project root)
 
 ### Setting Project Colors
 
@@ -122,16 +124,33 @@ Or use the VSCode Peacock extension to set colors interactively.
 4. Uses complementary badge colors for lint indicators
 5. Falls back to default cyan/purple if no theme found
 
-### Path Detection
+### Project Root Detection
 
-Monitors ALL Claude operations to detect current project:
-- ✅ Read/Write/Edit - `file_path` parameter
-- ✅ Grep - `path` parameter
-- ✅ Glob - `pattern` if it contains a path
-- ✅ Bash cd - directory changes
-- ✅ Any Bash command - with file paths
+**Automatic detection** - No configuration needed! The statusline:
 
-Uses **most recent** operation to determine active project.
+1. **Monitors ALL Claude operations** to detect files being edited:
+   - ✅ Read/Write/Edit - `file_path` parameter
+   - ✅ Grep - `path` parameter
+   - ✅ Glob - `pattern` if it contains a path
+   - ✅ Bash cd - directory changes
+   - ✅ Any Bash command - with file paths
+
+2. **Walks up directory tree** from detected file to find project root:
+   - Looks for `.git/` directory
+   - Looks for `package.json`, `go.mod`, `Cargo.toml`, `pyproject.toml`
+   - Looks for `composer.json`, `build.gradle`, `pom.xml`
+
+3. **Shows correct project name** even for deeply nested files:
+   - File: `~/code/my-app/src/components/ui/Button.tsx`
+   - Shows: `my-app` (not `ui` or `components`)
+
+4. **Works with any code directory structure**:
+   - `~/code/` - Standard location
+   - `~/Source/` - macOS/Apple convention
+   - `~/projects/`, `~/dev/`, `~/workspace/` - Alternative locations
+   - Nested projects like `~/code/clients/acme/website` work perfectly
+
+Uses **most recent** operation to determine active working folder.
 
 ### Color Rendering
 
@@ -144,21 +163,23 @@ Uses **most recent** operation to determine active project.
 
 ## Configuration
 
-**No configuration needed!** The statusline automatically detects:
-- **Code directory**: Checks `~/code`, `~/projects`, `~/dev`, `~/workspace`, `~/src` (or falls back to `~`)
-- **Editor**: Detects installed editors (`cursor`, `code`, `subl`) for clickable file links
+**Zero configuration required!** The statusline automatically:
 
-### Optional Environment Variables
+- **Finds project roots** - Walks up directory tree to find `.git`, `package.json`, etc.
+- **Works anywhere** - `~/code`, `~/Source`, `~/projects`, or any nested structure
+- **Detects editor** - Auto-detects `cursor`, `vscode`, or `sublime` for clickable file links
 
-Override auto-detection if needed:
+### Optional Configuration
 
+Override auto-detection only if needed (set during `/peacock:setup`):
+
+**Editor scheme** - Saved to `~/.claude/.peacock-config`:
 ```bash
-# Custom code directory
-export CODE_DIR="$HOME/custom/path"
-
-# Force specific editor scheme
-export EDITOR_SCHEME="vscode"  # Options: cursor, vscode, sublime, file
+# Force specific editor (optional)
+EDITOR_SCHEME="vscode"  # Options: cursor, vscode, sublime, file
 ```
+
+**Note:** If you don't create a config file, the statusline auto-detects everything!
 
 ### VSCode Settings Structure
 
@@ -191,23 +212,38 @@ The statusline reads these Peacock properties:
 ### Project with Peacock Theme
 
 ```
-⌂ sigma-auth ▶ ✓ ▶ ⎇ master  35k app/page.tsx
+⌂ sigma-auth ▶ ✓ ▶ ⎇ master  [35k] app/page.tsx
 ```
-Uses deep magenta (#8d0756) from sigma-auth's Peacock settings
+Uses deep magenta (#8d0756) from sigma-auth's Peacock settings, token usage in gray box
 
 ### Multiple Projects
 
 ```
-⌂ prompts ▶ ✓ ▶ ⎇ master  ✎ go-sdk ▶ ✗1 ▶ ⎇ feature*  89k README.md
+⌂ prompts ▶ ✓ ▶ ⎇ master  ✎ go-sdk ▶ ✗1 ▶ ⎇ feature*  [89k] README.md
 ```
-Working in prompts (cyan), editing go-sdk (project's theme color)
+Working in prompts (cyan), editing go-sdk (project's theme color), separate token segment
 
 ### With Lint Errors
 
 ```
-⌂ my-app ▶ ✗5 △12 ▶ ⎇ develop*  142k components/Button.tsx
+⌂ my-app ▶ ✗5 △12 ▶ ⎇ develop*  [142k] components/Button.tsx
 ```
-5 errors, 12 warnings, uncommitted changes
+5 errors, 12 warnings, uncommitted changes, clean visual separation
+
+### Nested Project (Auto-detected Root)
+
+```
+⌂ website ▶ ✓ ▶ ⎇ main  [67k] src/components/ui/Button.tsx
+```
+File deep in `~/code/clients/acme/website/src/components/ui/Button.tsx`
+Shows "website" as project root (found via `.git`), not "ui" or "components"
+
+### ~/Source User (Zero Config)
+
+```
+⌂ my-project ▶ ✓ ▶ ⎇ main  [45k] index.ts
+```
+Works automatically even with code in `~/Source/my-project` instead of `~/code`
 
 ## Troubleshooting
 
@@ -232,9 +268,12 @@ Working in prompts (cyan), editing go-sdk (project's theme color)
 
 ### Statusline shows wrong project
 
-The statusline uses the most recent file operation. If it's wrong:
-1. Read a file in the correct project
-2. Check that paths are absolute (not relative)
+The statusline uses the most recent file operation and walks up to find the project root. If it's wrong:
+1. Make sure the project has a root marker (`.git`, `package.json`, `go.mod`, etc.)
+2. Read or edit a file in the correct project
+3. Check that project root detection is working: files deep in subdirectories should still show the correct project name
+
+**Example:** Editing `~/code/my-app/src/utils/helper.ts` should show "my-app", not "utils"
 
 ## Development
 

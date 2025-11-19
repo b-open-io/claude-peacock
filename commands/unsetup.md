@@ -1,5 +1,5 @@
 ---
-version: 0.0.2
+version: 0.0.3
 allowed-tools: Read, Bash(command:*), Bash(ls:*), Bash(rm:*), Bash(jq:*), Bash(mv:*), Bash(head:*), Bash(grep:*)
 description: Remove Peacock statusline configuration - run before uninstalling plugin
 tags: uninstall, cleanup, statusline
@@ -42,13 +42,14 @@ Or install jq and run /peacock:unsetup again:
 
 And stop execution.
 
-## Step 2: Remove Config File
+## Step 2: Remove Config File (If Exists)
 
-Remove the Peacock config file if it exists:
+Remove the Peacock config file if it exists (optional file, only created if user chose specific editor):
 
 ```bash
 if [[ -f ~/.claude/.peacock-config ]]; then
   rm ~/.claude/.peacock-config
+  echo "  • Removed ~/.claude/.peacock-config"
 fi
 ```
 
@@ -104,7 +105,7 @@ Output:
 ✅ Peacock statusline configuration removed successfully!
 
 What was done:
-  • Removed ~/.claude/.peacock-config
+  • Removed ~/.claude/.peacock-config (if it existed)
   • Removed ~/.claude/statusline.sh
   • Removed statusLine entry from ~/.claude/settings.json
 
@@ -115,6 +116,12 @@ Next steps:
 To reinstall later:
   /plugin install peacock@b-open-io
   /peacock:setup
+
+Features you'll get back:
+  • Automatic project root detection (works with ~/code, ~/Source, ~/projects)
+  • Peacock theme color integration
+  • Git branch, lint status, and token usage display
+  • Clickable file paths
 ```
 
 ## Edge Cases

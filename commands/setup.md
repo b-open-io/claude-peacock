@@ -1,5 +1,5 @@
 ---
-version: 0.0.3
+version: 0.0.4
 allowed-tools: Read, Write, AskUserQuestion, Bash(command:*), Bash(ls:*), Bash(cp:*), Bash(chmod:*), Bash(jq:*), Bash(mv:*), Bash(echo:*), Bash(cat:*)
 description: Configure Peacock statusline - run after plugin installation
 tags: setup, installation, statusline
@@ -40,41 +40,40 @@ After installing jq, run /peacock:setup again.
 
 And stop execution.
 
-## Step 2: Ask User for Code Directory
+## Step 2: Ask User for Editor (Optional)
 
-Ask the user where their code projects are located. Use AskUserQuestion with these options:
+The statusline will auto-detect your editor, but you can override it.
 
-**Question:**
-- header: "Code Directory"
-- question: "Where are your code projects located?"
-- multiSelect: false
-- options:
-  - label: "~/code", description: "Standard location (most common)"
-  - label: "~/Source", description: "macOS/Apple convention"
-  - label: "~/projects", description: "Alternative common location"
-  - label: "~/dev", description: "Developer folder"
-  - label: "~/workspace", description: "IDE workspace folder"
-  - label: "Other", description: "Specify custom path"
-
-If user selects "Other", they can type a custom path.
-
-Store the selected CODE_DIR value for later.
-
-## Step 3: Ask User for Editor
-
-Ask which editor they use for clickable file links:
+Ask the user if they want to configure the editor manually:
 
 **Question:**
-- header: "Editor"
-- question: "Which editor should open when you click file paths?"
+- header: "Editor Setup"
+- question: "How should clickable file paths open?"
 - multiSelect: false
 - options:
-  - label: "cursor", description: "Cursor AI editor (default)"
-  - label: "vscode", description: "Visual Studio Code"
-  - label: "sublime", description: "Sublime Text"
-  - label: "file", description: "System default application"
+  - label: "Auto-detect", description: "Automatically detect cursor/vscode/sublime (recommended)"
+  - label: "cursor", description: "Always use Cursor AI editor"
+  - label: "vscode", description: "Always use Visual Studio Code"
+  - label: "sublime", description: "Always use Sublime Text"
+  - label: "file", description: "Use system default application"
 
-Store the selected EDITOR_SCHEME value.
+Store the selected value.
+
+## Step 3: Create Config File (If Needed)
+
+Only create config if user chose a specific editor (not "Auto-detect").
+
+If user selected a specific editor:
+```bash
+cat > ~/.claude/.peacock-config << EOF
+# Peacock statusline configuration
+# This file is sourced by statusline.sh
+
+EDITOR_SCHEME="$EDITOR_SCHEME"
+EOF
+```
+
+If user selected "Auto-detect", skip config file creation entirely.
 
 ## Step 4: Find Plugin Directory
 
@@ -98,21 +97,7 @@ Make sure you've installed the plugin first:
 
 And stop execution.
 
-## Step 5: Create Config File
-
-Create `~/.claude/.peacock-config` with the user's settings:
-
-```bash
-cat > ~/.claude/.peacock-config << EOF
-# Peacock statusline configuration
-# This file is sourced by statusline.sh
-
-CODE_DIR="$CODE_DIR"
-EDITOR_SCHEME="$EDITOR_SCHEME"
-EOF
-```
-
-## Step 6: Copy Statusline Script
+## Step 5: Copy Statusline Script
 
 Copy the statusline script from the plugin directory to ~/.claude/:
 
@@ -121,7 +106,7 @@ cp ~/.claude/plugins/cache/peacock/statusline.sh ~/.claude/statusline.sh
 chmod +x ~/.claude/statusline.sh
 ```
 
-## Step 7: Configure settings.json
+## Step 6: Configure settings.json
 
 Create or update `~/.claude/settings.json` with the statusLine configuration.
 
@@ -147,16 +132,14 @@ jq '. + {"statusLine": {"type": "command", "command": "~/.claude/statusline.sh"}
 mv ~/.claude/settings.json.tmp ~/.claude/settings.json
 ```
 
-## Step 8: Confirm Success
+## Step 7: Confirm Success
 
-Output:
+If user chose auto-detect:
 ```
 ✅ Peacock statusline configured successfully!
 
 Configuration:
-  • Code directory: $CODE_DIR
-  • Editor: $EDITOR_SCHEME
-  • Config saved to: ~/.claude/.peacock-config
+  • Editor: Auto-detect (cursor → vscode → sublime → file)
   • Statusline: ~/.claude/statusline.sh
   • Settings: ~/.claude/settings.json
 
@@ -164,9 +147,12 @@ Next step:
   Restart Claude Code to see your new statusline
 
 Features:
-  • Shows Peacock theme colors from .vscode/settings.json
-  • Displays git branch, lint status, and clickable file paths
-  • Tracks current and edited projects
+  ✓ Automatic project root detection (finds .git, package.json, etc.)
+  ✓ Works with any code directory (~/code, ~/Source, ~/projects)
+  ✓ Shows Peacock theme colors from .vscode/settings.json
+  ✓ Displays git branch, lint status, and token usage
+  ✓ Clickable file paths that open in your editor
+  ✓ Separate visual segments for project and working folder
 
 Set project colors:
   /peacock:project-color dark forest green
@@ -177,6 +163,12 @@ Need to change settings?
 
 Need to uninstall later?
   Run /peacock:unsetup before uninstalling the plugin
+```
+
+If user chose a specific editor, also include:
+```
+  • Editor: $EDITOR_SCHEME
+  • Config: ~/.claude/.peacock-config
 ```
 
 ## Error Handling

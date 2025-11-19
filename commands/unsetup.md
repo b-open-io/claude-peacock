@@ -1,6 +1,6 @@
 ---
-version: 0.0.5
-allowed-tools: Read, Bash(command:*), Bash(ls:*), Bash(rm:*), Bash(jq:*), Bash(mv:*), Bash(head:*), Bash(grep:*)
+version: 0.0.6
+allowed-tools: Read, Bash
 description: Remove Peacock statusline and linting configuration - run before uninstalling plugin
 tags: uninstall, cleanup, statusline, linting
 ---

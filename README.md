@@ -98,23 +98,59 @@ The statusline activates automatically and shows:
 - `[125k]` - Token usage in separate dark gray box
 - `statusline.sh` - Last edited file (clickable, relative to project root)
 
-### Setting Project Colors
+### Color Management Commands
 
-Manually edit `.vscode/settings.json` in your project:
+Peacock includes commands for managing project colors, matching the [VSCode Peacock extension](https://github.com/johnpapa/vscode-peacock) workflow:
 
-```json
-{
-  "peacock.color": "#8d0756",
-  "workbench.colorCustomizations": {
-    "titleBar.activeBackground": "#8d0756",
-    "activityBar.foreground": "#e7e7e7",
-    "activityBarBadge.foreground": "#15202b",
-    "activityBarBadge.background": "#6fb709"
-  }
-}
+#### Set Project Color
+
+**Change to specific color:**
+```bash
+/peacock:change-color #8d0756         # Hex code
+/peacock:change-color deep magenta    # Natural language
+/peacock:change-color                 # Random vibrant color
 ```
 
-Or use the VSCode Peacock extension to set colors interactively.
+**Quick random color:**
+```bash
+/peacock:random-color
+```
+
+#### Manage Favorites
+
+**Save current color:**
+```bash
+/peacock:save-favorite                # Use hex as name
+/peacock:save-favorite magenta theme  # Custom name
+```
+
+**Apply from favorites:**
+```bash
+/peacock:favorite-color               # Interactive selection
+```
+
+Favorites are stored in `~/.claude/.peacock-favorites.json` and sync across all your projects.
+
+#### Reset Colors
+
+**Remove Peacock customizations:**
+```bash
+/peacock:reset-colors
+```
+
+### Natural Language Colors
+
+The plugin supports descriptive color names:
+
+**Vibrant:** red, orange, yellow, green, teal, cyan, blue, purple, magenta
+**Dark:** dark red, forest green, navy, indigo, dark magenta
+**Light:** pink, peach, mint, sky blue, lavender
+
+**Example:**
+```bash
+/peacock:change-color vibrant ocean blue
+/peacock:change-color dark forest green
+```
 
 ## How It Works
 

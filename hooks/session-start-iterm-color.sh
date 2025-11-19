@@ -19,8 +19,34 @@ if [[ -z "$CWD" ]]; then
   exit 0
 fi
 
-# Check if Peacock settings exist
-PEACOCK_SETTINGS="$CWD/.vscode/settings.json"
+# Find project root by walking up directory tree
+# Looks for: .git, package.json, go.mod, Cargo.toml, pyproject.toml, composer.json
+find_project_root() {
+  local path="$1"
+  local current="$path"
+
+  while [[ "$current" != "/" && "$current" != "$HOME" ]]; do
+    if [[ -d "$current/.git" ]] || \
+       [[ -f "$current/package.json" ]] || \
+       [[ -f "$current/go.mod" ]] || \
+       [[ -f "$current/Cargo.toml" ]] || \
+       [[ -f "$current/pyproject.toml" ]] || \
+       [[ -f "$current/composer.json" ]]; then
+      echo "$current"
+      return 0
+    fi
+    current=$(dirname "$current")
+  done
+
+  # Fallback to original path
+  echo "$path"
+}
+
+# Find project root from CWD
+PROJECT_ROOT=$(find_project_root "$CWD")
+
+# Check if Peacock settings exist in project root
+PEACOCK_SETTINGS="$PROJECT_ROOT/.vscode/settings.json"
 if [[ ! -f "$PEACOCK_SETTINGS" ]]; then
   exit 0
 fi

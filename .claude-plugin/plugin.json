@@ -1,22 +1,23 @@
 {
   "name": "peacock",
-  "description": "Complete Claude Code workspace integration - Peacock theme statusline, automatic linting, terminal title, iTerm2 tab colors, and color management commands",
-  "version": "0.1.0",
+  "description": "Complete Claude Code workspace integration - Peacock theme statusline, automatic linting, terminal title, iTerm2 tab colors, and full VSCode Peacock-compatible color management",
+  "version": "1.0.0",
   "author": {
     "name": "b-open-io",
     "url": "https://github.com/b-open-io"
   },
   "repository": "b-open-io/claude-peacock",
   "keywords": [
-    "statusline",
     "peacock",
     "vscode",
+    "statusline",
     "colors",
     "theme",
     "linting",
     "terminal-title",
     "iterm2",
-    "color-management"
+    "color-management",
+    "favorites"
   ],
   "hooks": "./hooks/hooks.json"
 }

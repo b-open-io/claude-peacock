@@ -100,56 +100,84 @@ The statusline activates automatically and shows:
 
 ### Color Management Commands
 
-Peacock includes commands for managing project colors, matching the [VSCode Peacock extension](https://github.com/johnpapa/vscode-peacock) workflow:
+Complete command suite matching the [VSCode Peacock extension](https://github.com/johnpapa/vscode-peacock) API:
 
-#### Set Project Color
+#### Setting Colors
 
-**Change to specific color:**
+| Command | Description |
+|---------|-------------|
+| `/peacock:change-color [color]` | Set color (hex, natural language, or random if no arg) |
+| `/peacock:random-color` | Quick random vibrant color |
+| `/peacock:peacock-green` | Apply signature Peacock Green (#42b883) |
+
+**Examples:**
 ```bash
 /peacock:change-color #8d0756         # Hex code
 /peacock:change-color deep magenta    # Natural language
-/peacock:change-color                 # Random vibrant color
+/peacock:change-color                 # Random vibrant
+/peacock:random-color                 # Quick random
+/peacock:peacock-green                # Signature color
 ```
 
-**Quick random color:**
+#### Adjusting Colors
+
+| Command | Description |
+|---------|-------------|
+| `/peacock:lighten` | Lighten current color by 10% |
+| `/peacock:darken` | Darken current color by 10% |
+
+**Examples:**
 ```bash
-/peacock:random-color
+/peacock:lighten    # Make current color lighter
+/peacock:darken     # Make current color darker
 ```
 
-#### Manage Favorites
+#### Managing Favorites
 
-**Save current color:**
+| Command | Description |
+|---------|-------------|
+| `/peacock:save-favorite [name]` | Save current color to favorites |
+| `/peacock:favorite-color` | Apply color from favorites (interactive) |
+| `/peacock:add-recommended` | Add 14 curated colors to favorites |
+
+**Examples:**
 ```bash
-/peacock:save-favorite                # Use hex as name
-/peacock:save-favorite magenta theme  # Custom name
+/peacock:save-favorite magenta theme  # Save with custom name
+/peacock:favorite-color               # Pick from favorites
+/peacock:add-recommended              # Add Angular, React, Vue, etc.
 ```
 
-**Apply from favorites:**
+Favorites stored in `~/.claude/.peacock-favorites.json` - syncs across all projects.
+
+**Recommended Colors Include:**
+Angular Red, Azure Blue, JavaScript Yellow, Gatsby Purple, Go Cyan, Java Orange, Node Green, Peacock Green, Python Blue, React Blue, Ruby Red, TypeScript Blue, Rust Orange, Vue Green
+
+#### Viewing & Resetting
+
+| Command | Description |
+|---------|-------------|
+| `/peacock:show-current` | Display current color and copy to clipboard |
+| `/peacock:reset-colors` | Remove Peacock customizations from project |
+| `/peacock:remove-all-colors` | Complete removal (project + favorites + config) |
+
+**Examples:**
 ```bash
-/peacock:favorite-color               # Interactive selection
+/peacock:show-current       # See what's applied
+/peacock:reset-colors       # Remove project colors
+/peacock:remove-all-colors  # Nuclear option
 ```
 
-Favorites are stored in `~/.claude/.peacock-favorites.json` and sync across all your projects.
-
-#### Reset Colors
-
-**Remove Peacock customizations:**
-```bash
-/peacock:reset-colors
-```
-
-### Natural Language Colors
-
-The plugin supports descriptive color names:
+### Natural Language Color Support
 
 **Vibrant:** red, orange, yellow, green, teal, cyan, blue, purple, magenta
 **Dark:** dark red, forest green, navy, indigo, dark magenta
 **Light:** pink, peach, mint, sky blue, lavender
 
-**Example:**
+**Examples:**
 ```bash
 /peacock:change-color vibrant ocean blue
 /peacock:change-color dark forest green
+/peacock:change-color light purple
 ```
 
 ## How It Works
@@ -428,6 +456,26 @@ Contributions welcome! Please:
 2. Create a feature branch
 3. Test your changes locally
 4. Submit a pull request
+
+## Contributors
+
+Thanks to these wonderful people for their contributions:
+
+<!-- ALL-CONTRIBUTORS-LIST:START -->
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/b-open-io">
+        <img src="https://github.com/b-open-io.png" width="100px;" alt="b-open-io"/><br />
+        <sub><b>b-open-io</b></sub>
+      </a><br />
+      💻 📖 🎨
+    </td>
+  </tr>
+</table>
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
 
 ## License
 

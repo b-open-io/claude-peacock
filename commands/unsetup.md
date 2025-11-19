@@ -1,8 +1,8 @@
 ---
-version: 0.0.4
+version: 0.0.5
 allowed-tools: Read, Bash(command:*), Bash(ls:*), Bash(rm:*), Bash(jq:*), Bash(mv:*), Bash(head:*), Bash(grep:*)
-description: Remove Peacock statusline configuration - run before uninstalling plugin
-tags: uninstall, cleanup, statusline
+description: Remove Peacock statusline and linting configuration - run before uninstalling plugin
+tags: uninstall, cleanup, statusline, linting
 ---
 
 # Peacock Unsetup
@@ -44,7 +44,7 @@ And stop execution.
 
 ## Step 2: Remove Config File (If Exists)
 
-Remove the Peacock config file if it exists (optional file, only created if user chose specific editor):
+Remove the Peacock config file if it exists (stores editor preferences and linting configuration):
 
 ```bash
 if [[ -f ~/.claude/.peacock-config ]]; then
@@ -53,7 +53,18 @@ if [[ -f ~/.claude/.peacock-config ]]; then
 fi
 ```
 
-## Step 3: Remove Statusline Script
+## Step 3: Remove Lint State Files (If Exists)
+
+Remove lint state directory if it exists:
+
+```bash
+if [[ -d ~/.claude/lint-state ]]; then
+  rm -rf ~/.claude/lint-state
+  echo "  • Removed ~/.claude/lint-state/"
+fi
+```
+
+## Step 4: Remove Statusline Script
 
 Check if ~/.claude/statusline.sh exists:
 ```bash
@@ -78,7 +89,7 @@ Not removing it automatically. If you want to remove it, delete it manually:
   rm ~/.claude/statusline.sh
 ```
 
-## Step 4: Remove statusLine from settings.json
+## Step 5: Remove statusLine from settings.json
 
 Check if settings.json exists:
 ```bash
@@ -98,7 +109,7 @@ jq . ~/.claude/settings.json
 
 If validation fails, output error and restore from backup.
 
-## Step 5: Confirm Success
+## Step 6: Confirm Success
 
 Output:
 ```
@@ -106,10 +117,11 @@ Output:
 
 What was done:
   • Removed ~/.claude/.peacock-config (if it existed)
+  • Removed ~/.claude/lint-state/ (if it existed)
   • Removed ~/.claude/statusline.sh
   • Removed statusLine entry from ~/.claude/settings.json
 
-Note: Lint hooks will be automatically removed when you uninstall the plugin.
+Note: Lint hooks and iTerm2 color hooks will be automatically removed when you uninstall the plugin.
 
 Next steps:
   1. Restart Claude Code (statusline will no longer appear)

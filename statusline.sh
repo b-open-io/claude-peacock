@@ -458,4 +458,20 @@ if [[ -n "$LAST_FILE" && -f "$LAST_FILE" ]]; then
   OUTPUT="${OUTPUT} ${GRAY}\033]8;;${FILE_URL}\a${RELATIVE_FILE}\033]8;;\a${RESET}"
 fi
 
+# Set terminal title to project root
+# Uses OSC 0 sequence: \033]0;TITLE\007
+TERMINAL_TITLE=""
+if [[ -n "$EDITED_PROJECT_NAME" && "$EDITED_PROJECT_ROOT" != "$CWD_PROJECT_ROOT" ]]; then
+  # Editing different project - show both
+  TERMINAL_TITLE="${CWD_PROJECT_NAME} | ${EDITED_PROJECT_NAME}"
+elif [[ -n "$CWD_PROJECT_NAME" ]]; then
+  # Just show CWD project
+  TERMINAL_TITLE="$CWD_PROJECT_NAME"
+fi
+
+if [[ -n "$TERMINAL_TITLE" ]]; then
+  # Set terminal title (OSC 0 sequence)
+  echo -ne "\033]0;${TERMINAL_TITLE}\007" >&2
+fi
+
 echo -e "$OUTPUT"

@@ -16,6 +16,7 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 - 🎨 **Smart Text Contrast** - Uses Peacock's foreground colors for perfect readability
 - 🔗 **Clickable Paths** - Last edited file as clickable link (Cursor/VSCode/Sublime)
 - 📊 **Token Usage** - Real-time tracking in separate visual segment
+- 🪟 **Terminal Title** - Automatically sets terminal title to current project name(s)
 
 ## Installation
 
@@ -180,6 +181,27 @@ The plugin includes hooks that automatically run linting:
 - **Go**: Uses `golangci-lint run` if installed
 
 The hooks are automatically installed via the plugin system - no manual setup needed!
+
+### Terminal Title Management
+
+The statusline automatically sets your terminal window title to show which project(s) you're working on:
+
+**Single Project:**
+- Terminal title: `my-project`
+- Shows the project you're currently working in
+
+**Multiple Projects:**
+- Terminal title: `main-project | editing-project`
+- Left side: Project where Claude started (CWD)
+- Right side: Project you're currently editing
+
+**How It Works:**
+- Uses ANSI OSC 0 escape sequence (`\033]0;TITLE\007`)
+- Updates automatically as you work across projects
+- Compatible with most modern terminals (iTerm2, Terminal.app, Warp, etc.)
+- Helps identify Claude sessions when running multiple instances
+
+This makes it easy to distinguish between multiple Claude Code windows at a glance!
 
 ## Configuration
 

@@ -213,14 +213,25 @@ if [[ -n "$TRANSCRIPT" && -f "$TRANSCRIPT" ]]; then
   if [[ -n "$DETECTED_PATH" ]]; then
     # Expand ~ to $HOME
     DETECTED_PATH="${DETECTED_PATH/#\~/$HOME}"
-    # Remove glob patterns
-    DETECTED_PATH="${DETECTED_PATH%%\**}"
 
+    # Store for display
     LAST_FILE="$DETECTED_PATH"
 
-    # NEW: Find project root for this file
-    EDITED_PROJECT_ROOT=$(find_project_root "$DETECTED_PATH")
-    EDITED_PROJECT_NAME=$(basename "$EDITED_PROJECT_ROOT")
+    # For project root detection, remove glob patterns
+    # e.g., "~/code/**/*.md" -> "~/code"
+    PROJECT_DETECT_PATH="${DETECTED_PATH%%\**}"
+
+    # If it's a directory path (from Glob/Search), use it directly for project detection
+    # Otherwise find project root from file path
+    if [[ -d "$PROJECT_DETECT_PATH" ]]; then
+      EDITED_PROJECT_ROOT=$(find_project_root "$PROJECT_DETECT_PATH")
+    elif [[ -f "$DETECTED_PATH" || -d "$DETECTED_PATH" ]]; then
+      EDITED_PROJECT_ROOT=$(find_project_root "$DETECTED_PATH")
+    fi
+
+    if [[ -n "$EDITED_PROJECT_ROOT" ]]; then
+      EDITED_PROJECT_NAME=$(basename "$EDITED_PROJECT_ROOT")
+    fi
   fi
 fi
 

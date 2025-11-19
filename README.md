@@ -180,6 +180,33 @@ Angular Red, Azure Blue, JavaScript Yellow, Gatsby Purple, Go Cyan, Java Orange,
 /peacock:change-color light purple
 ```
 
+### Linting Configuration
+
+The plugin includes automatic linting with configurable language support. During setup, you choose which languages to lint:
+
+| Command | Description |
+|---------|-------------|
+| `/peacock:enable-linting` | Enable linting and select languages |
+| `/peacock:disable-linting` | Disable automatic linting |
+
+**Supported Languages:**
+- **TypeScript/JavaScript** - Uses Biome or ESLint (auto-detects from package.json)
+- **Go** - Uses golangci-lint (must be installed separately)
+
+**Configuration:**
+Linting preferences are stored in `~/.claude/.peacock-config`:
+```bash
+LINT_ENABLED="true"        # Master switch
+LINT_TYPESCRIPT="true"     # Enable TS/JS linting
+LINT_GO="true"            # Enable Go linting
+```
+
+**How it works:**
+- Runs automatically on file save (60-second cooldown)
+- Runs on session start for immediate feedback
+- Stores results in `~/.claude/lint-state/{project}.json`
+- Displays error/warning counts in statusline
+
 ## How It Works
 
 ### Color Detection

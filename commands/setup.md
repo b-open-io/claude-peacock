@@ -1,8 +1,8 @@
 ---
-version: 0.0.5
+version: 0.0.6
 allowed-tools: Read, Write, AskUserQuestion, Bash(command:*), Bash(ls:*), Bash(cp:*), Bash(chmod:*), Bash(jq:*), Bash(mv:*), Bash(echo:*), Bash(cat:*)
-description: Configure Peacock statusline - run after plugin installation
-tags: setup, installation, statusline
+description: Configure Peacock statusline and linting - run after plugin installation
+tags: setup, installation, statusline, linting
 ---
 
 # Peacock Setup
@@ -46,7 +46,7 @@ The statusline will auto-detect your editor, but you can override it.
 
 Ask the user if they want to configure the editor manually:
 
-**Question:**
+**Question 1:**
 - header: "Editor Setup"
 - question: "How should clickable file paths open?"
 - multiSelect: false
@@ -57,23 +57,68 @@ Ask the user if they want to configure the editor manually:
   - label: "sublime", description: "Always use Sublime Text"
   - label: "file", description: "Use system default application"
 
-Store the selected value.
+Store the selected value as EDITOR_CHOICE.
 
-## Step 3: Create Config File (If Needed)
+## Step 2b: Ask User About Linting
 
-Only create config if user chose a specific editor (not "Auto-detect").
+Ask the user if they want automatic linting enabled:
 
-If user selected a specific editor:
+**Question 2:**
+- header: "Linting"
+- question: "Enable automatic linting on file save?"
+- multiSelect: false
+- options:
+  - label: "Yes", description: "Run linters automatically when files are saved (recommended)"
+  - label: "No", description: "Disable automatic linting"
+
+Store the selected value as LINT_ENABLED.
+
+**If user selected "Yes", ask which languages:**
+
+**Question 3:**
+- header: "Languages"
+- question: "Which languages should be linted?"
+- multiSelect: true
+- options:
+  - label: "TypeScript/JavaScript", description: "Lint .ts/.js files using Biome or ESLint"
+  - label: "Go", description: "Lint .go files using golangci-lint"
+
+Store the selected values as LINT_LANGUAGES (will be an array).
+
+## Step 3: Create Config File
+
+Always create the config file to store linting preferences.
+
+Build the config file content based on user selections:
+
 ```bash
-cat > ~/.claude/.peacock-config << EOF
-# Peacock statusline configuration
-# This file is sourced by statusline.sh
+cat > ~/.claude/.peacock-config << 'EOF'
+# Peacock configuration
+# This file is sourced by statusline.sh and lint hooks
 
+# Editor configuration
 EDITOR_SCHEME="$EDITOR_SCHEME"
+
+# Linting configuration
+LINT_ENABLED="$LINT_ENABLED"
+LINT_TYPESCRIPT="$LINT_TYPESCRIPT"
+LINT_GO="$LINT_GO"
 EOF
 ```
 
-If user selected "Auto-detect", skip config file creation entirely.
+**Variable values:**
+- `EDITOR_SCHEME`:
+  - If user selected "Auto-detect" → leave empty or set to "auto"
+  - Otherwise → set to the selected editor ("cursor", "vscode", "sublime", "file")
+- `LINT_ENABLED`:
+  - If user selected "Yes" → "true"
+  - If user selected "No" → "false"
+- `LINT_TYPESCRIPT`:
+  - If "TypeScript/JavaScript" was selected → "true"
+  - Otherwise → "false"
+- `LINT_GO`:
+  - If "Go" was selected → "true"
+  - Otherwise → "false"
 
 ## Step 4: Find Plugin Directory
 
@@ -136,15 +181,17 @@ mv ~/.claude/settings.json.tmp ~/.claude/settings.json
 
 ## Step 7: Confirm Success
 
-If user chose auto-detect:
+Build the success message based on user configuration:
+
 ```
 ✅ Peacock statusline configured successfully!
 
 Configuration:
-  • Editor: Auto-detect (cursor → vscode → sublime → file)
+  • Editor: $EDITOR_DISPLAY
   • Statusline: ~/.claude/statusline.sh
   • Settings: ~/.claude/settings.json
-  • Lint hooks: Auto-installed via plugin system
+  • Config: ~/.claude/.peacock-config
+  • Linting: $LINT_STATUS
 
 Next step:
   Restart Claude Code to see your new statusline and activate lint hooks
@@ -154,13 +201,13 @@ Features:
   ✓ Works with any code directory (~/code, ~/Source, ~/projects)
   ✓ Shows Peacock theme colors from .vscode/settings.json
   ✓ Displays git branch, lint status, and token usage
-  ✓ Automatic linting on save (TypeScript/JavaScript via Biome/ESLint, Go via golangci-lint)
   ✓ Clickable file paths that open in your editor
   ✓ Separate visual segments for project and working folder
+  $LINT_FEATURES
 
 Set project colors:
-  /peacock:project-color dark forest green
-  /peacock:project-color #8d0756
+  /peacock:change-color dark forest green
+  /peacock:change-color #8d0756
 
 Need to change settings?
   Run /peacock:setup again (safe to re-run)
@@ -169,11 +216,18 @@ Need to uninstall later?
   Run /peacock:unsetup before uninstalling the plugin
 ```
 
-If user chose a specific editor, also include:
-```
-  • Editor: $EDITOR_SCHEME
-  • Config: ~/.claude/.peacock-config
-```
+**Variable values:**
+- `EDITOR_DISPLAY`:
+  - If auto-detect: "Auto-detect (cursor → vscode → sublime → file)"
+  - Otherwise: the selected editor name
+- `LINT_STATUS`:
+  - If enabled: "Enabled for $LANGUAGES" (e.g., "Enabled for TypeScript/JavaScript, Go")
+  - If disabled: "Disabled"
+- `LINT_FEATURES`:
+  - If TypeScript enabled: "✓ Automatic linting on save (TypeScript/JavaScript via Biome/ESLint)"
+  - If Go enabled: "✓ Automatic linting on save (Go via golangci-lint)"
+  - If both: show both lines
+  - If disabled: don't show any linting features
 
 ## Error Handling
 

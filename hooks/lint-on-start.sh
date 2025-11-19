@@ -5,6 +5,17 @@
 
 set -e
 
+# Load Peacock config
+CONFIG_FILE="$HOME/.claude/.peacock-config"
+if [[ -f "$CONFIG_FILE" ]]; then
+  source "$CONFIG_FILE"
+fi
+
+# Check if linting is enabled globally
+if [[ "${LINT_ENABLED:-true}" != "true" ]]; then
+  exit 0  # Linting disabled
+fi
+
 # Read hook input from stdin
 INPUT=$(cat)
 
@@ -37,6 +48,13 @@ elif [[ -f "$PROJECT_DIR/go.mod" ]]; then
   LINT_SCRIPT="golangci-lint"
 else
   exit 0  # Not a supported project type
+fi
+
+# Check if this language is enabled in config
+if [[ "$PROJECT_TYPE" == "node" && "${LINT_TYPESCRIPT:-true}" != "true" ]]; then
+  exit 0  # TypeScript/JavaScript linting disabled
+elif [[ "$PROJECT_TYPE" == "go" && "${LINT_GO:-true}" != "true" ]]; then
+  exit 0  # Go linting disabled
 fi
 
 # Create state directory

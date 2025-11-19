@@ -5,6 +5,17 @@
 
 set -e
 
+# Load Peacock config
+CONFIG_FILE="$HOME/.claude/.peacock-config"
+if [[ -f "$CONFIG_FILE" ]]; then
+  source "$CONFIG_FILE"
+fi
+
+# Check if linting is enabled globally
+if [[ "${LINT_ENABLED:-true}" != "true" ]]; then
+  exit 0  # Linting disabled
+fi
+
 # Read hook input from stdin
 INPUT=$(cat)
 
@@ -35,6 +46,13 @@ done
 
 if [[ -z "$PROJECT_DIR" ]]; then
   exit 0  # No project marker found
+fi
+
+# Check if this language is enabled in config
+if [[ "$PROJECT_TYPE" == "node" && "${LINT_TYPESCRIPT:-true}" != "true" ]]; then
+  exit 0  # TypeScript/JavaScript linting disabled
+elif [[ "$PROJECT_TYPE" == "go" && "${LINT_GO:-true}" != "true" ]]; then
+  exit 0  # Go linting disabled
 fi
 
 # Check if lint tool exists for project type

@@ -1,8 +1,8 @@
 # Peacock
 
-> Peacock theme integration for Claude Code
+> Complete Claude Code workspace integration
 
-Beautiful, theme-aware statusline for Claude Code that automatically matches your VSCode Peacock colors with 24-bit true color support.
+A comprehensive Claude Code plugin that brings together visual theming, automatic linting, and intelligent project management. Matches your VSCode Peacock colors with 24-bit true color support, sets terminal titles and iTerm2 tab colors, runs linting automatically, and keeps you informed with real-time project status.
 
 ## Features
 
@@ -17,6 +17,7 @@ Beautiful, theme-aware statusline for Claude Code that automatically matches you
 - 🔗 **Clickable Paths** - Last edited file as clickable link (Cursor/VSCode/Sublime)
 - 📊 **Token Usage** - Real-time tracking in separate visual segment
 - 🪟 **Terminal Title** - Automatically sets terminal title to current project name(s)
+- 🎨 **iTerm2 Tab Colors** - Matches tab color to your Peacock theme (iTerm2 only)
 
 ## Installation
 
@@ -202,6 +203,31 @@ The statusline automatically sets your terminal window title to show which proje
 - Helps identify Claude sessions when running multiple instances
 
 This makes it easy to distinguish between multiple Claude Code windows at a glance!
+
+### iTerm2 Tab Color Integration
+
+**iTerm2 users get an extra bonus feature** - the tab color automatically matches your Peacock theme!
+
+**How It Works:**
+- Uses iTerm2's proprietary OSC 6 escape sequences
+- Sets tab background color to your CWD project's Peacock color
+- Updates automatically as you switch projects
+- Only activates if:
+  1. You're using iTerm2 (other terminals ignore the sequence)
+  2. Your project has a Peacock color configured
+
+**Visual Example:**
+```
+Project A (Peacock color: #8d0756) → iTerm2 tab turns deep magenta
+Project B (Peacock color: #007acc) → iTerm2 tab turns blue
+```
+
+**Configuration:**
+- Zero setup required!
+- Works automatically if you have `.vscode/settings.json` with Peacock colors
+- Falls back gracefully on other terminals (no errors, just no tab color)
+
+This feature is particularly useful when running multiple Claude Code sessions - each project gets its own color-coded tab!
 
 ## Configuration
 

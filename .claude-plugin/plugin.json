@@ -1,7 +1,7 @@
 {
   "name": "peacock",
-  "description": "Peacock theme integration for Claude Code - statusline with 24-bit true color support, automatic project detection, and terminal title management",
-  "version": "0.0.11",
+  "description": "Complete Claude Code workspace integration - Peacock theme statusline, automatic linting, terminal title & iTerm2 tab color management",
+  "version": "0.0.12",
   "author": {
     "name": "b-open-io",
     "url": "https://github.com/b-open-io"
@@ -14,7 +14,8 @@
     "colors",
     "theme",
     "linting",
-    "terminal-title"
+    "terminal-title",
+    "iterm2"
   ],
   "hooks": "./hooks/hooks.json"
 }

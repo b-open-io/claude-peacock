@@ -21,14 +21,20 @@ A comprehensive Claude Code plugin that brings together visual theming, automati
 
 ## Installation
 
-**Step 1:** Install the plugin
+Works with Claude Code, Cursor, Codex, and other AI coding agents:
 
-```shell
+```bash
+npx add-skill b-open-io/claude-peacock
+```
+
+Or via Claude Code marketplace:
+
+```bash
 /plugin marketplace add b-open-io/claude-plugins
 /plugin install peacock@b-open-io
 ```
 
-**Step 2:** Run setup
+**After installing:** Run setup
 
 ```shell
 /peacock:setup

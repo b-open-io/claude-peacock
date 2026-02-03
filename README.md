@@ -19,6 +19,35 @@ A comprehensive Claude Code plugin that brings together visual theming, automati
 - 🪟 **Terminal Title** - Automatically sets terminal title to current project name(s)
 - 🎨 **iTerm2 Tab Colors** - Matches tab color to your Peacock theme (iTerm2 only)
 
+## Skills
+
+This repository also provides installable skills for enhanced functionality:
+
+### peacock-colors
+
+Manage VS Code project colors with Peacock-style theming.
+
+```bash
+npx skills add b-open-io/claude-peacock/peacock-colors
+```
+
+**Capabilities:**
+- Set project colors (hex, natural language, or random)
+- Darken/lighten current colors
+- Save and apply favorite colors
+- Show current color information
+- Reset/remove all color settings
+
+**Usage examples:**
+```
+Set my project color to #FF5733
+Set my project color to dark forest green
+Darken my project color by 10%
+Save this as my favorite "production" color
+Show my project color
+Reset my project colors
+```
+
 ## Installation
 
 Works with Claude Code, Cursor, Codex, and other AI coding agents:

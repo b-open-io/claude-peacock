@@ -28,7 +28,7 @@ This repository also provides installable skills for enhanced functionality:
 Manage VS Code project colors with Peacock-style theming.
 
 ```bash
-npx skills add b-open-io/claude-peacock/peacock-colors
+npx skills add b-open-io/claude-peacock --skill peacock-colors
 ```
 
 **Capabilities:**

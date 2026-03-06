@@ -153,7 +153,7 @@ Applied to:
 Reload VSCode to see changes:
   Cmd+Shift+P → "Developer: Reload Window"
 
-The Claude Code statusline will update automatically on next refresh.
+iTerm2 tab color will update on next session start.
 ```
 
 ## Error Handling

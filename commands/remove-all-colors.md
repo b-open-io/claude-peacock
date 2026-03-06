@@ -48,14 +48,7 @@ Remove favorites file:
 rm ~/.claude/.peacock-favorites.json 2>/dev/null || true
 ```
 
-## Step 3: Remove Config
-
-Remove config file if exists:
-```bash
-rm ~/.claude/.peacock-config 2>/dev/null || true
-```
-
-## Step 4: Confirm
+## Step 3: Confirm
 
 Output:
 ```
@@ -64,10 +57,8 @@ Output:
 Removed:
   • Project colors (.vscode/settings.json)
   • Favorites (~/.claude/.peacock-favorites.json)
-  • Configuration (~/.claude/.peacock-config)
 
-The statusline will show default colors.
-iTerm2 tab color will reset to default.
+iTerm2 tab color will reset to default on next session start.
 
 To start fresh:
   /peacock:change-color #8d0756

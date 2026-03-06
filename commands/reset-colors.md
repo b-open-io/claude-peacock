@@ -95,6 +95,6 @@ Removed from .vscode/settings.json:
 Reload VSCode window to see changes:
   Cmd+Shift+P → "Developer: Reload Window"
 
-The Claude Code statusline will show default colors.
+iTerm2 tab color will reset to default on next session start.
 ```
 </instructions>

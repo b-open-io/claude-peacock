@@ -123,5 +123,25 @@ rm -rf "$NOMARKER_DIR"
 rm -rf "$FIXTURE_DIR" "$PROJECT_DIR"
 
 echo ""
+echo "=== iterm2 escape sequences ==="
+
+source "$SCRIPT_DIR/scripts/iterm2.sh"
+
+# Capture output to verify format (redirect stderr to file)
+ITERM_OUT=$(mktemp)
+set_iterm2_tab_color 141 7 86 2>"$ITERM_OUT"
+
+# Check that the file contains the expected OSC 6 sequences
+RED_COUNT=$(grep -c 'red;brightness;141' "$ITERM_OUT" || true)
+GREEN_COUNT=$(grep -c 'green;brightness;7' "$ITERM_OUT" || true)
+BLUE_COUNT=$(grep -c 'blue;brightness;86' "$ITERM_OUT" || true)
+
+assert_eq "red channel present" "1" "$RED_COUNT"
+assert_eq "green channel present" "1" "$GREEN_COUNT"
+assert_eq "blue channel present" "1" "$BLUE_COUNT"
+
+rm -f "$ITERM_OUT"
+
+echo ""
 echo "=== Results: $PASS passed, $FAIL failed ==="
 [[ $FAIL -eq 0 ]] && exit 0 || exit 1

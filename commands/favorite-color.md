@@ -36,7 +36,7 @@ Save your first favorite:
   /peacock:save-favorite
 
 Or add recommended favorites:
-  /peacock:add-favorites
+  /peacock:add-recommended
 ```
 Stop execution.
 

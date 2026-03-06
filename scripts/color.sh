@@ -5,12 +5,21 @@
 # Usage: hex_to_rgb "#8d0756" -> "141 7 86"
 hex_to_rgb() {
   local hex="${1#\#}"
+  if [[ ${#hex} -ne 6 || ! "$hex" =~ ^[0-9a-fA-F]{6}$ ]]; then
+    echo "Error: invalid hex color '$1'" >&2
+    return 1
+  fi
   echo "$((16#${hex:0:2})) $((16#${hex:2:2})) $((16#${hex:4:2}))"
 }
 
 # Read peacock base color from project's .vscode/settings.json
 # Usage: read_peacock_color "/path/to/project" -> "#8d0756" or ""
 read_peacock_color() {
+  if ! command -v jq &>/dev/null; then
+    echo "Error: jq is required but not installed" >&2
+    return 1
+  fi
+
   local project_dir="$1"
   local settings="$project_dir/.vscode/settings.json"
 

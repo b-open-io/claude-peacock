@@ -1,7 +1,7 @@
 ---
 name: peacock-colors
 version: 1.0.0
-description: This skill should be used when the user asks to "set project color", "change VS Code color", "darken project color", "lighten project color", "save favorite color", or mentions Peacock color theming.
+description: Project color theming for VS Code and iTerm2. Use when the user asks to set, change, darken, lighten, or reset project colors, save favorite colors, or mentions Peacock color theming.
 ---
 
 # Peacock Colors
@@ -78,7 +78,6 @@ Remove all color settings
 
 - **Project colors**: `.vscode/settings.json` under `peacock.color` and `workbench.colorCustomizations`
 - **Favorites**: `~/.claude/.peacock-favorites.json`
-- **Configuration**: `~/.claude/.peacock-config`
 
 ### Color Format Support
 
@@ -249,7 +248,6 @@ When generating random colors, select from:
 **Remove All (complete cleanup):**
 1. Remove project colors from `.vscode/settings.json`
 2. Delete `~/.claude/.peacock-favorites.json`
-3. Delete `~/.claude/.peacock-config`
 
 ## Example Output
 

@@ -8,5 +8,5 @@
   },
   "repository": "b-open-io/claude-peacock",
   "keywords": ["peacock", "vscode", "colors", "theme", "iterm2", "color-management"],
-  "hooks": "../hooks/hooks.json"
+  "hooks": "./hooks/hooks.json"
 }

@@ -7,17 +7,5 @@
     "url": "https://github.com/b-open-io"
   },
   "repository": "b-open-io/claude-peacock",
-  "keywords": ["peacock", "vscode", "colors", "theme", "iterm2", "color-management"],
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh"
-          }
-        ]
-      }
-    ]
-  }
+  "keywords": ["peacock", "vscode", "colors", "theme", "iterm2", "color-management"]
 }
